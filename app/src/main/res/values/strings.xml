@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">GossipSurvey</string>
+    <string name="action_settings">Settings</string>
+    <string name="new_survey">New Survey</string>
+    <string name="save_suvey">Save</string>
+</resources>
