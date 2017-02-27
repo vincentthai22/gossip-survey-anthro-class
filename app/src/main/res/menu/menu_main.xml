@@ -8,7 +8,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_save"
-        android:title="@string/save_suvey"
+        android:title="@string/save_survey"
         app:showAsAction="ifRoom"
         />
 </menu>

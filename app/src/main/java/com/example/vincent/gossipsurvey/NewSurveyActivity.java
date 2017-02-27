@@ -1,18 +1,24 @@
 package com.example.vincent.gossipsurvey;
 
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.vincent.gossipsurvey.models.Survey;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,10 +34,19 @@ import java.util.Objects;
 
 public class NewSurveyActivity extends AppCompatActivity {
 
+    public final static String SURVEY_DATA_STRING = "survey";
+
+    private AlertDialog.Builder builder;
+    private AlertDialog saveAlertDialog;
+    private GossipArrayAdapter<List<String>> adapter;
+    private Survey surveyData;
+    private NewSurveyActivity selfRef;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_survey);
+        selfRef = this;
         initialize();
     }
 
@@ -44,6 +59,15 @@ public class NewSurveyActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
+            saveAlertDialog.show();
+            Log.d("adapter",adapter.getAnswers().get(0));
+            return true;
+        } else if (id == android.R.id.home){
+            Intent intent = getIntent();
+            surveyData = new Survey("null");
+            intent.putExtra(SURVEY_DATA_STRING,surveyData);
+            setResult(RESULT_OK,intent);
+            this.finish();
             return true;
         }
 
@@ -62,12 +86,40 @@ public class NewSurveyActivity extends AppCompatActivity {
 
     public void initialize(){
 
-        ListView surveyList = (ListView)  findViewById(R.id.newSurveyListView);
+        final ListView surveyList = (ListView)  findViewById(R.id.newSurveyListView);
         List< List<String> > questionsAndOptionsList = new ArrayList<>();
         buildList(questionsAndOptionsList);
         LinearLayout buttonBar = (LinearLayout) findViewById(R.id.buttonBarLayout);
         TextView questionTextView = (TextView) findViewById(R.id.questionTextView);
-        surveyList.setAdapter(new GossipArrayAdapter<List<String>>(this.getApplicationContext(), R.layout.list_survey_item, questionsAndOptionsList));
+        adapter = new GossipArrayAdapter<List<String>>(this.getApplicationContext(), R.layout.list_survey_item, questionsAndOptionsList);
+        surveyList.setAdapter(adapter);
+
+        //setup alertdialog
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Save");
+        builder.setMessage("Please Enter Name:");
+        final EditText textField = new EditText(this);
+        builder.setView(textField);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                surveyData = new Survey(textField.getText().toString());
+                surveyData.setAnswers(adapter.getAnswers());
+                Intent intent = getIntent();
+                intent.putExtra(SURVEY_DATA_STRING,surveyData);
+                setResult(RESULT_OK,intent);
+                selfRef.finish();
+            }
+        });
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //do nothin.
+            }
+        });
+
+        saveAlertDialog = builder.create();
 
     }
 
@@ -114,12 +166,6 @@ public class NewSurveyActivity extends AppCompatActivity {
         }
 
     }
-
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-    }
-
 
 
 }

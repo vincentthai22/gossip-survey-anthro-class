@@ -2,6 +2,7 @@ package com.example.vincent.gossipsurvey;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.vincent.gossipsurvey.models.Survey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +26,25 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
 
     private List<T> list;
     private int resource, headerResource;
+    private List<String> answers;
 
     public GossipArrayAdapter(Context context, int resource, int headerResource, List<String> list){
         super(context,resource, list);
         this.list = (ArrayList) list;
         this.resource = resource;
         this.headerResource = headerResource;
+        answers = new ArrayList<>();
     }
     public GossipArrayAdapter(Context context, int resource,  List<T> list){
         super(context,resource, list);
         this.list = (ArrayList) list;
         this.resource = resource;
+        answers = new ArrayList<>();
+        Log.d("size",answers.size()+"");
+        answers.add("Survey");
+        for(int i = 0 ; i < 18; i++){
+            answers.add("blank");
+        }
     }
 
     @Override
@@ -46,7 +57,7 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
         return list.get(position);
     }
 
-    public View createViewFromResource(int position, View convertView, ViewGroup parent, int resource){
+    public View createViewFromResource(final int position, View convertView, ViewGroup parent, int resource){
         View view;
         LayoutInflater mInflater = (LayoutInflater)  getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView text, rightText;
@@ -58,9 +69,8 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
         switch(resource) {
             case R.layout.list_item:
                 text = (TextView) view.findViewById(R.id.nameLabel);
-                img = (ImageView) view.findViewById(R.id.profileImage);
                 Log.d("setText", "" + getItem(position));
-                text.setText( (String) getItem(position));
+                text.setText( ((Survey) getItem(position)).getName());
                 return view;
             case R.layout.list_survey_item:
 
@@ -69,7 +79,6 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
                 LinearLayout buttonBar = (LinearLayout) view.findViewById(R.id.buttonBarLayout);
                 buttonBar.setDividerPadding(10);
                 int width = 0;
-
                 buttonBar.removeAllViews();
                 int i = 0;
                 if(questionAndOptions.size()>1)
@@ -77,14 +86,28 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
                         if (i == 0)
                             questionTextView.setText((String) questionOrOption);
                         else {
-                            Button newOptionButton = new Button(this.getContext());
+                            final Button newOptionButton = new Button(this.getContext());
+                            newOptionButton.setId(position);
                             newOptionButton.setBackgroundColor(Color.GRAY);
                             newOptionButton.setTextColor(Color.BLACK);
-                            Log.d("questionoroption", (String) questionOrOption);
                             newOptionButton.setText((String) questionOrOption);
-                            width += newOptionButton.getWidth();
-                            Log.d("width", width+"");
+                            newOptionButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if( ((ColorDrawable) newOptionButton.getBackground()).getColor() == Color.GRAY) {
+                                        newOptionButton.setBackgroundColor(Color.GREEN);
+                                        answers.remove(position);
+                                        answers.add(position, (String) newOptionButton.getText());
+                                    } else {
+                                        newOptionButton.setBackgroundColor(Color.GRAY);
+                                        answers.remove(position);
+                                    }
+                                Log.d("buttonId", newOptionButton.getId()+"");
+                                }
+
+                            });
                             buttonBar.addView(newOptionButton);
+
 
                         }
                         i++;
@@ -99,4 +122,9 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
         }
         return view;
     }
+
+    public List<String> getAnswers(){
+        return answers;
+    }
+
 }

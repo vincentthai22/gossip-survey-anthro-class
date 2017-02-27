@@ -10,12 +10,27 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.example.vincent.gossipsurvey.models.Survey;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    public final static String SAVED_INSTANCE_SURVEY_LIST = "savedinsntancesurvey";
+
+    private List<Survey> surveyList = new ArrayList<>();
+    private GossipArrayAdapter<Survey> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            surveyList = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_SURVEY_LIST);
+        } catch (NullPointerException e){}
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -30,6 +45,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initialize();
+
+    }
+
+    public void initialize(){
+        final ListView surveyListView= (ListView) findViewById(R.id.surveyListView);
+        adapter = new GossipArrayAdapter<Survey>(this, R.layout.list_item, surveyList);
+        surveyListView.setAdapter(adapter);
+        surveyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.d("onItemClcik", "youve clicked position: "+position );
+            }
+        });
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        Survey s = data.getParcelableExtra(NewSurveyActivity.SURVEY_DATA_STRING);
+        if(!s.getName().equals("null")) {
+            surveyList.add(s);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -39,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.action_save);
         item.setVisible(false);
         return true;
+    }
+
+    public void testMethod(){
+        Log.d("testing","123123");
     }
 
     @Override
@@ -56,10 +98,31 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        try{
+            if(savedInstanceState != null){
+                savedInstanceState.putParcelableArrayList(SAVED_INSTANCE_SURVEY_LIST, (ArrayList)surveyList);
+            } else {
+
+            }
+        } catch(NullPointerException e){
+
+        }
+
+       // super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        surveyList = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_SURVEY_LIST);
+        adapter.notifyDataSetChanged();
+    }
+
     public void addButtonHandler(){
         Log.d("addButon", "we made it into add button");
         Intent intent = new Intent(this, NewSurveyActivity.class);
-            startActivity(intent);
+        int requestCode = 2;
+        startActivityForResult(intent, requestCode);
 
     }
 
