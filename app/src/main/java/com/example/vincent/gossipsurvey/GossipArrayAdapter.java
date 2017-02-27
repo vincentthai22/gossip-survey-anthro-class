@@ -67,6 +67,7 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
         else
             view = convertView;
         switch(resource) {
+
             case R.layout.list_item:
                 text = (TextView) view.findViewById(R.id.nameLabel);
                 Log.d("setText", "" + getItem(position));
@@ -114,8 +115,14 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
                     }
                 else
                     questionTextView.setText("Survey");
-
                 return view;
+
+            case R.layout.list_survey_entry_item:
+                List<String> questionAndAnswer = (ArrayList<String>) getItem(position);
+                questionTextView = (TextView) view.findViewById(R.id.questionTextView);
+                TextView answerTextView = (TextView) view.findViewById(R.id.answerTextView);
+                questionTextView.setText(questionAndAnswer.get(0));
+                answerTextView.setText(questionAndAnswer.get(1));
 
 
 

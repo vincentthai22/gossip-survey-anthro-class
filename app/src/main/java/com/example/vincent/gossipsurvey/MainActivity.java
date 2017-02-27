@@ -24,10 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Survey> surveyList = new ArrayList<>();
     private GossipArrayAdapter<Survey> adapter;
+    private MainActivity selfRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        selfRef = this;
         try {
             surveyList = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_SURVEY_LIST);
         } catch (NullPointerException e){}
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Log.d("onItemClcik", "youve clicked position: "+position );
+                Intent intent = new Intent(selfRef, ViewSurveyActivity.class);
+                intent.putExtra( NewSurveyActivity.SURVEY_DATA_STRING , surveyList.get(position));
+                startActivity(intent);
             }
         });
 
