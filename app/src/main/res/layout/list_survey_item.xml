@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     android:id="@+id/surveyContainer">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/buttonBarLayout">
+
+    </LinearLayout>
+
     <TextView
         android:text="Survey"
         android:layout_width="match_parent"
@@ -15,13 +23,5 @@
         android:textSize="16sp"
         android:textColor="@android:color/background_dark"
         android:gravity="center" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/buttonBarLayout">
-
-    </LinearLayout>
 
 </LinearLayout>

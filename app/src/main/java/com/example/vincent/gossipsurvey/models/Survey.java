@@ -58,6 +58,10 @@ public class Survey implements Parcelable{
         parcel.writeStringList(answers);
     }
 
+    public int getCount(){
+        return answers.size() + 1;
+    }
+
     public void readFromParcel(Parcel in){
         int count = in.readInt();
         for(int i = 0 ; i < count ; i++){
@@ -78,5 +82,6 @@ public class Survey implements Parcelable{
     public List<String> getAnswers(){
         return answers;
     }
+
 
 }

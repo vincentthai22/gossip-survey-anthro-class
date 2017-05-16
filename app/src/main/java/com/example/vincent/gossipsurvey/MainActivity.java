@@ -1,5 +1,6 @@
 package com.example.vincent.gossipsurvey;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,12 @@ import android.widget.ListView;
 
 import com.example.vincent.gossipsurvey.models.Survey;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +59,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initialize(){
+        try {
+            FileInputStream fis = openFileInput("surveys");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String temp;
+            while((temp = br.readLine()) != null){
+                sb.append(temp);
+                Log.d("input reader", temp);
+            }
+        } catch (FileNotFoundException e) {
+            Log.d("filenotfound", "not found");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d("filenotfound2", "not found");
+            e.printStackTrace();
+        }
+
+
         final ListView surveyListView= (ListView) findViewById(R.id.surveyListView);
         adapter = new GossipArrayAdapter<Survey>(this, R.layout.list_item, surveyList);
         surveyListView.setAdapter(adapter);
@@ -72,6 +98,24 @@ public class MainActivity extends AppCompatActivity {
         if(!s.getName().equals("null")) {
             surveyList.add(s);
             adapter.notifyDataSetChanged();
+        }
+
+        try {
+            FileOutputStream fos = openFileOutput("surveys.txt", Context.MODE_PRIVATE);
+            for(int i = 0 ; i < surveyList.size(); i++){
+                Survey survey = surveyList.get(i);
+                List<String> answers = survey.getAnswers();
+
+                for(int j = 0 ; j < answers.size(); j++){
+                    fos.write( survey.getName().getBytes() );
+                    fos.write(answers.get(i).getBytes());
+                    fos.close();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

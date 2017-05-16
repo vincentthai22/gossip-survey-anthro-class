@@ -41,7 +41,7 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
         this.resource = resource;
         answers = new ArrayList<>();
         Log.d("size",answers.size()+"");
-        answers.add("Survey");
+        //answers.add("Survey");
         for(int i = 0 ; i < 18; i++){
             answers.add("blank");
         }
@@ -97,10 +97,14 @@ public class GossipArrayAdapter<T> extends ArrayAdapter {
                                 public void onClick(View view) {
                                     if( ((ColorDrawable) newOptionButton.getBackground()).getColor() == Color.GRAY) {
                                         newOptionButton.setBackgroundColor(Color.GREEN);
-                                        answers.remove(position);
-                                        answers.add(position, (String) newOptionButton.getText());
+                                        if (position < answers.size()) {
+                                            answers.remove(position);
+                                            answers.add(position, (String) newOptionButton.getText());
+                                        }
                                     } else {
+
                                         newOptionButton.setBackgroundColor(Color.GRAY);
+                                        if (position < answers.size())
                                         answers.remove(position);
                                     }
                                 Log.d("buttonId", newOptionButton.getId()+"");
