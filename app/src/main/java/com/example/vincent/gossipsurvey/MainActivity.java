@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void initialize(){
         try {
-            FileInputStream fis = openFileInput("surveys");
+            FileInputStream fis = openFileInput("surveys.txt");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
             StringBuilder sb = new StringBuilder();

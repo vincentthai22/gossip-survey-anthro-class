@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GossipSurvey.iml" filepath="$PROJECT_DIR$/GossipSurvey.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gossip-survey-anthro-class.iml" filepath="$PROJECT_DIR$/gossip-survey-anthro-class.iml" />
     </modules>
   </component>
 </project>
